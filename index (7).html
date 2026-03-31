@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestionProjetBTP — Logiciel BTP Algérien</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vert: #1B5E20;
+            --vert-m: #2E7D32;
+            --vert-clair: #4CAF50;
+            --vert-pale: #E8F5E9;
+            --or: #F9A825;
+            --noir: #0D1B0E;
+            --gris: #546E57;
+            --blanc: #FAFFF9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--blanc);
+            color: var(--noir);
+            overflow-x: hidden;
+        }
+        body.ar {
+            font-family: 'Tajawal', sans-serif;
+            direction: rtl;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; height: 70px;
+            background: rgba(27, 94, 32, 0.97);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+        .nav-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem; color: white; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .nav-logo span { color: var(--or); }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a {
+            color: rgba(255,255,255,0.85); text-decoration: none;
+            font-size: 0.9rem; font-weight: 500; transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--or); }
+        .btn-lang {
+            background: rgba(249,168,37,0.2);
+            border: 1px solid var(--or);
+            color: var(--or); padding: 5px 14px;
+            border-radius: 50px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-lang:hover { background: var(--or); color: var(--noir); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0D1B0E 0%, #1B5E20 50%, #2E7D32 100%);
+            display: flex; align-items: center; padding: 0 5%;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-content { position: relative; max-width: 680px; }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(249,168,37,0.2);
+            border: 1px solid rgba(249,168,37,0.4);
+            color: var(--or); padding: 6px 16px;
+            border-radius: 50px; font-size: 0.8rem;
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 3.8rem);
+            color: white; line-height: 1.15; margin-bottom: 1.5rem;
+        }
+        body.ar .hero h1 { font-family: 'Tajawal', sans-serif; font-weight: 700; }
+        .hero h1 em { font-style: normal; color: var(--or); }
+        .hero p {
+            color: rgba(255,255,255,0.75); font-size: 1.05rem;
+            line-height: 1.8; margin-bottom: 1.5rem; max-width: 560px;
+        }
+        .revision-box {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px; padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .revision-box .r-title {
+            color: var(--or); font-weight: 600;
+            font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 0.2rem;
+        }
+        .revision-box .r-sub {
+            color: rgba(255,255,255,0.8); font-size: 0.88rem;
+        }
+        .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--or); color: var(--noir);
+            padding: 14px 32px; border-radius: 6px;
+            text-decoration: none; font-weight: 600;
+            font-size: 0.95rem; transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-primary:hover {
+            background: #FFB300; transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(249,168,37,0.4);
+        }
+        .btn-secondary {
+            background: transparent; color: white;
+            padding: 14px 32px; border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.4);
+            text-decoration: none; font-weight: 500;
+            font-size: 0.95rem; transition: all 0.2s; display: inline-block;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1); border-color: white;
+        }
+        .hero-right {
+            position: absolute; right: 6%; top: 50%;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+        }
+        body.ar .hero-right { right: auto; left: 6%; }
+
+        /* SECTIONS */
+        .section { padding: 100px 5%; }
+        .section-label {
+            color: var(--vert-clair); font-size: 0.8rem;
+            letter-spacing: 3px; text-transform: uppercase;
+            font-weight: 600; margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            color: var(--noir); line-height: 1.2; margin-bottom: 1rem;
+        }
+        body.ar .section-title { font-family: 'Tajawal', sans-serif; font-weight: 700; }
+        .section-sub {
+            color: var(--gris); font-size: 1.05rem;
+            line-height: 1.7; max-width: 580px; margin-bottom: 4rem;
+        }
+
+        /* FEATURES */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: white; border: 1px solid #E0EEE1;
+            border-radius: 12px; padding: 2rem;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--vert), var(--vert-clair));
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(27,94,32,0.1);
+            border-color: #A5D6A7;
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .feature-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--noir); margin-bottom: 0.6rem; }
+        .feature-card p { color: var(--gris); font-size: 0.9rem; line-height: 1.65; }
+
+        /* STATS */
+        .stats {
+            background: linear-gradient(135deg, var(--vert) 0%, var(--vert-m) 100%);
+            padding: 80px 5%;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem; text-align: center;
+        }
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem; color: var(--or); font-weight: 900; line-height: 1;
+        }
+        .stat-label { color: rgba(255,255,255,0.8); font-size: 0.9rem; margin-top: 0.5rem; }
+
+        /* MODULES */
+        .modules { background: #F1F8F1; }
+        .modules-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+        .module-item {
+            background: white; border-radius: 10px; padding: 1.5rem;
+            display: flex; align-items: flex-start; gap: 1rem;
+            border: 1px solid #E0EEE1; transition: all 0.2s;
+        }
+        .module-item:hover { border-color: var(--vert-clair); box-shadow: 0 4px 16px rgba(27,94,32,0.08); }
+        .module-num {
+            background: var(--vert-pale); color: var(--vert);
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .module-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--noir); margin-bottom: 0.3rem; }
+        .module-item p { font-size: 0.82rem; color: var(--gris); line-height: 1.5; }
+
+        /* STEPS */
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+        .step-num {
+            width: 48px; height: 48px; background: var(--vert);
+            color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 1.2rem;
+        }
+        .step h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--noir); }
+        .step p { color: var(--gris); font-size: 0.88rem; line-height: 1.6; }
+
+        /* LICENCE */
+        .licence-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .licence-card { border-radius: 16px; padding: 2.5rem; position: relative; overflow: hidden; }
+        .licence-card.usb { background: linear-gradient(135deg, #E65100 0%, #F57C00 100%); color: white; }
+        .licence-card.pc { background: linear-gradient(135deg, var(--vert) 0%, var(--vert-m) 100%); color: white; }
+        .licence-card h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        body.ar .licence-card h3 { font-family: 'Tajawal', sans-serif; }
+        .licence-card .subtitle { opacity: 0.8; font-size: 0.88rem; margin-bottom: 1.5rem; }
+        .licence-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+        .licence-card ul li { font-size: 0.9rem; padding-left: 1.5rem; position: relative; opacity: 0.9; }
+        body.ar .licence-card ul li { padding-left: 0; padding-right: 1.5rem; }
+        .licence-card ul li::before { content: '✓'; position: absolute; left: 0; font-weight: 700; }
+        body.ar .licence-card ul li::before { left: auto; right: 0; }
+        .licence-badge { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2.5rem; opacity: 0.3; }
+
+        /* FAQ */
+        .faq-list { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid #E0EEE1; padding: 1.5rem 0; }
+        .faq-q {
+            font-weight: 600; color: var(--noir); font-size: 1rem;
+            cursor: pointer; display: flex; justify-content: space-between;
+            align-items: center; gap: 1rem;
+        }
+        .faq-q span { color: var(--vert); font-size: 1.3rem; transition: transform 0.2s; display: inline-block; }
+        .faq-a { color: var(--gris); font-size: 0.92rem; line-height: 1.7; margin-top: 0.8rem; display: none; }
+        .faq-item.open .faq-a { display: block; }
+        .faq-item.open .faq-q span { transform: rotate(45deg); }
+
+        /* CONTACT */
+        .contact { background: var(--noir); }
+        .contact .section-title { color: white; }
+        .contact .section-sub { color: rgba(255,255,255,0.6); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+        .contact-info { display: flex; flex-direction: column; gap: 1.5rem; }
+        .contact-item { display: flex; align-items: center; gap: 1rem; }
+        .contact-icon {
+            width: 48px; height: 48px; background: rgba(255,255,255,0.08);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+        }
+        .contact-item h4 { color: rgba(255,255,255,0.5); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.2rem; }
+        .contact-item p { color: white; font-size: 0.95rem; }
+
+        /* FOOTER */
+        footer {
+            background: #060D07; padding: 2rem 5%;
+            display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        footer p { color: rgba(255,255,255,0.3); font-size: 0.82rem; }
+        .footer-logo { font-family: 'Playfair Display', serif; color: rgba(255,255,255,0.5); font-size: 1rem; }
+        .footer-logo span { color: var(--or); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 120px 4% 60px; }
+            .section { padding: 60px 4%; }
+            .hero-right { display: none; }
+            .licence-cards { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-content > * { animation: fadeUp 0.7s ease both; }
+        .hero-content > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-content > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+        .hero-content > *:nth-child(4) { animation-delay: 0.4s; }
+        .hero-content > *:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-logo">
+        <img src="data:image/png;base64,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" alt="logo" style="height:36px;opacity:0.9;"/>
+        Gestion<span>ProjetBTP</span>
+    </div>
+    <div class="nav-links">
+        <a href="#fonctionnalites" data-fr="Fonctionnalités" data-ar="المميزات">Fonctionnalités</a>
+        <a href="#modules" data-fr="Modules" data-ar="الوحدات">Modules</a>
+        <a href="#installation" data-fr="Installation" data-ar="التثبيت">Installation</a>
+        <a href="#licence" data-fr="Licence" data-ar="الترخيص">Licence</a>
+        <a href="#faq" data-fr="FAQ" data-ar="الأسئلة الشائعة">FAQ</a>
+        <a href="#contact" data-fr="Contact" data-ar="التواصل">Contact</a>
+        <button class="btn-lang" onclick="toggleLang()">🌐 العربية</button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge" data-fr="Logiciel BTP Algérien" data-ar="برنامج البناء الجزائري">Logiciel BTP Algérien</div>
+        <h1 data-fr="Gérez vos projets BTP<br>avec <em>précision</em>" data-ar="أدر مشاريع البناء<br>بكل <em>دقة</em>">Gérez vos projets BTP<br>avec <em>précision</em></h1>
+        <p data-fr="GestionProjetBTP est le logiciel professionnel dédié aux entreprises algériennes du bâtiment. Révision des prix, décomptes, avenants — tout en un." data-ar="برنامج GestionProjetBTP هو الحل الاحترافي المخصص للمؤسسات الجزائرية في قطاع البناء. مراجعة الأسعار، الكشوفات، الملاحق — كل شيء في مكان واحد.">GestionProjetBTP est le logiciel professionnel dédié aux entreprises algériennes du bâtiment. Révision des prix, décomptes, avenants — tout en un.</p>
+        <div class="revision-box">
+            <span style="font-size:1.5rem">📊</span>
+            <div>
+                <div class="r-title" data-fr="RÉVISION DES PRIX" data-ar="مراجعة الأسعار">RÉVISION DES PRIX</div>
+                <div class="r-sub" data-fr="Calcul automatique K · Formule A &amp; B · Import JO PDF · Actualisation des prix" data-ar="حساب تلقائي K · صيغة A و B · استيراد JO PDF · تحديث الأسعار">Calcul automatique K · Formule A &amp; B · Import JO PDF · Actualisation des prix</div>
+            </div>
+        </div>
+        <div class="hero-btns">
+            <a href="#installation" class="btn-primary" data-fr="📥 Télécharger" data-ar="📥 تحميل">📥 Télécharger</a>
+            <a href="#modules" class="btn-secondary" data-fr="Découvrir les modules →" data-ar="اكتشف الوحدات →">Découvrir les modules →</a>
+        </div>
+    </div>
+    <div class="hero-right">
+        <img src="data:image/png;base64,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" alt="LEMAVGRIS" style="width:180px;opacity:0.85;"/>
+        <div style="color:rgba(255,255,255,0.6);font-family:'Playfair Display',serif;font-size:1.1rem;letter-spacing:4px;margin-top:0.8rem;">LEMAVGRIS</div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="fonctionnalites">
+    <div class="section-label" data-fr="Fonctionnalités" data-ar="المميزات">Fonctionnalités</div>
+    <h2 class="section-title" data-fr="Tout ce dont vous avez besoin" data-ar="كل ما تحتاجه">Tout ce dont vous avez besoin</h2>
+    <p class="section-sub" data-fr="Conçu pour les entreprises BTP algériennes, conforme au Décret Présidentiel N°15-247 du 16/09/2015." data-ar="مصمم للمؤسسات الجزائرية في قطاع البناء، متوافق مع المرسوم الرئاسي رقم 15-247.">Conçu pour les entreprises BTP algériennes, conforme au Décret Présidentiel N°15-247 du 16/09/2015.</p>
+    <div class="features-grid">
+        <div class="feature-card">
+            <span class="feature-icon">📊</span>
+            <h3 data-fr="Révision &amp; Actualisation des Prix" data-ar="مراجعة وتحديث الأسعار">Révision &amp; Actualisation des Prix</h3>
+            <p data-fr="Calcul automatique du coefficient K avec formules paramétriques. Import des indices depuis le Journal Officiel (PDF)." data-ar="حساب تلقائي للمعامل K مع الصيغ البارامترية. استيراد المؤشرات من الجريدة الرسمية (PDF).">Calcul automatique du coefficient K avec formules paramétriques. Import des indices depuis le Journal Officiel (PDF).</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">📄</span>
+            <h3 data-fr="Décomptes Mensuels" data-ar="الكشوفات الشهرية">Décomptes Mensuels</h3>
+            <p data-fr="Génération automatique des décomptes avec retenue de garantie, avance forfaitaire et récupération appro." data-ar="إنشاء تلقائي للكشوفات مع ضمان الاحتجاز والسلفة الجزافية واسترداد التموين.">Génération automatique des décomptes avec retenue de garantie, avance forfaitaire et récupération appro.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">📋</span>
+            <h3 data-fr="Attachements" data-ar="المحاضر">Attachements</h3>
+            <p data-fr="Relevé des quantités réalisées par période. Verrouillage et liaison automatique avec les décomptes." data-ar="تسجيل الكميات المنجزة لكل فترة. القفل والربط التلقائي مع الكشوفات.">Relevé des quantités réalisées par période. Verrouillage et liaison automatique avec les décomptes.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">📌</span>
+            <h3 data-fr="Ordres de Service (ODS)" data-ar="أوامر الخدمة">Ordres de Service (ODS)</h3>
+            <p data-fr="Gestion complète des ODS : démarrage, arrêt, reprise, prolongation. Calcul automatique des délais." data-ar="إدارة كاملة لأوامر الخدمة: الانطلاق، التوقف، الاستئناف، التمديد. حساب تلقائي للآجال.">Gestion complète des ODS : démarrage, arrêt, reprise, prolongation. Calcul automatique des délais.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">📑</span>
+            <h3 data-fr="Avenants &amp; DGD" data-ar="الملاحق والحساب الختامي">Avenants &amp; DGD</h3>
+            <p data-fr="Création et impression des avenants de modification, clôture et régularisation. Décompte Général Définitif." data-ar="إنشاء وطباعة ملاحق التعديل والإغلاق والتسوية. الحساب العام الختامي.">Création et impression des avenants de modification, clôture et régularisation. Décompte Général Définitif.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">🖨</span>
+            <h3 data-fr="Documents Officiels" data-ar="الوثائق الرسمية">Documents Officiels</h3>
+            <p data-fr="Génération et impression des états de révision, situations AF/Appro, et tous documents réglementaires." data-ar="إنشاء وطباعة حالات المراجعة، وضعيات السلفة/التموين، وجميع الوثائق التنظيمية.">Génération et impression des états de révision, situations AF/Appro, et tous documents réglementaires.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">📥</span>
+            <h3 data-fr="Import JO/BOMOP" data-ar="استيراد الجريدة الرسمية">Import JO/BOMOP</h3>
+            <p data-fr="Import automatique des indices matières depuis les PDF officiels du Journal Officiel algérien." data-ar="استيراد تلقائي لمؤشرات المواد من ملفات PDF الرسمية للجريدة الرسمية الجزائرية.">Import automatique des indices matières depuis les PDF officiels du Journal Officiel algérien.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon">🌐</span>
+            <h3 data-fr="Bilingue Français / Arabe" data-ar="ثنائي اللغة فرنسي / عربي">Bilingue Français / Arabe</h3>
+            <p data-fr="Interface disponible en français et en arabe. Basculement instantané entre les deux langues." data-ar="الواجهة متاحة بالفرنسية والعربية. تبديل فوري بين اللغتين.">Interface disponible en français et en arabe. Basculement instantané entre les deux langues.</p>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+    <div class="stats-grid">
+        <div><div class="stat-num">208</div><div class="stat-label" data-fr="Références JO préchargées" data-ar="مراجع الجريدة الرسمية المحملة مسبقاً">Références JO préchargées</div></div>
+        <div><div class="stat-num">1991</div><div class="stat-label" data-fr="Indices historiques depuis" data-ar="المؤشرات التاريخية منذ">Indices historiques depuis</div></div>
+        <div><div class="stat-num">100%</div><div class="stat-label" data-fr="Conforme Décret 15-247" data-ar="متوافق مع المرسوم 15-247">Conforme Décret 15-247</div></div>
+        <div><div class="stat-num">.NET 10</div><div class="stat-label" data-fr="Technologie moderne" data-ar="تقنية حديثة">Technologie moderne</div></div>
+    </div>
+</section>
+
+<!-- MODULES -->
+<section class="section modules" id="modules">
+    <div class="section-label" data-fr="Modules" data-ar="الوحدات">Modules</div>
+    <h2 class="section-title" data-fr="Une solution complète" data-ar="حل متكامل">Une solution complète</h2>
+    <p class="section-sub" data-fr="Chaque module couvre un aspect essentiel de la gestion de projet BTP." data-ar="كل وحدة تغطي جانباً أساسياً من إدارة مشاريع البناء.">Chaque module couvre un aspect essentiel de la gestion de projet BTP.</p>
+    <div class="modules-list">
+        <div class="module-item"><div class="module-num">01</div><div><h4 data-fr="Gestion des Projets" data-ar="إدارة المشاريع">Gestion des Projets</h4><p data-fr="Création, suivi et archivage des marchés BTP." data-ar="إنشاء ومتابعة وأرشفة صفقات البناء.">Création, suivi et archivage des marchés BTP.</p></div></div>
+        <div class="module-item"><div class="module-num">02</div><div><h4 data-fr="Articles du Marché" data-ar="بنود الصفقة">Articles du Marché</h4><p data-fr="Saisie des bordereaux de prix. Import depuis Excel." data-ar="إدخال قوائم الأسعار. استيراد من Excel.">Saisie des bordereaux de prix. Import depuis Excel.</p></div></div>
+        <div class="module-item"><div class="module-num">03</div><div><h4 data-fr="Ordres de Service" data-ar="أوامر الخدمة">Ordres de Service</h4><p data-fr="Démarrage, arrêt, reprise et prolongation." data-ar="الانطلاق، التوقف، الاستئناف والتمديد.">Démarrage, arrêt, reprise et prolongation.</p></div></div>
+        <div class="module-item"><div class="module-num">04</div><div><h4 data-fr="Attachements" data-ar="المحاضر">Attachements</h4><p data-fr="Relevé mensuel des quantités réalisées." data-ar="تسجيل شهري للكميات المنجزة.">Relevé mensuel des quantités réalisées.</p></div></div>
+        <div class="module-item"><div class="module-num">05</div><div><h4 data-fr="Décomptes" data-ar="الكشوفات">Décomptes</h4><p data-fr="Calcul automatique des décomptes mensuels." data-ar="حساب تلقائي للكشوفات الشهرية.">Calcul automatique des décomptes mensuels.</p></div></div>
+        <div class="module-item"><div class="module-num">06</div><div><h4 data-fr="Révision des Prix" data-ar="مراجعة الأسعار">Révision des Prix</h4><p data-fr="Formule A ou B. Calcul du coefficient K." data-ar="الصيغة A أو B. حساب المعامل K.">Formule A ou B. Calcul du coefficient K.</p></div></div>
+        <div class="module-item"><div class="module-num">07</div><div><h4 data-fr="Actualisation des Prix" data-ar="تحديث الأسعار">Actualisation des Prix</h4><p data-fr="Déclenchement automatique si délai de carence dépassé." data-ar="تفعيل تلقائي عند تجاوز فترة الانتظار.">Déclenchement automatique si délai de carence dépassé.</p></div></div>
+        <div class="module-item"><div class="module-num">08</div><div><h4 data-fr="Indices JO/BOMOP" data-ar="مؤشرات الجريدة الرسمية">Indices JO/BOMOP</h4><p data-fr="Saisie trimestrielle. Import PDF automatique." data-ar="إدخال ربع سنوي. استيراد PDF تلقائي.">Saisie trimestrielle. Import PDF automatique.</p></div></div>
+        <div class="module-item"><div class="module-num">09</div><div><h4 data-fr="Avenants" data-ar="الملاحق">Avenants</h4><p data-fr="Modification, clôture et régularisation." data-ar="التعديل، الإغلاق والتسوية.">Modification, clôture et régularisation.</p></div></div>
+        <div class="module-item"><div class="module-num">10</div><div><h4 data-fr="DGD" data-ar="الحساب الختامي">DGD</h4><p data-fr="Décompte Général Définitif. Clôture du marché." data-ar="الحساب العام الختامي. إغلاق الصفقة.">Décompte Général Définitif. Clôture du marché.</p></div></div>
+        <div class="module-item"><div class="module-num">11</div><div><h4 data-fr="Avance Forfaitaire" data-ar="السلفة الجزافية">Avance Forfaitaire</h4><p data-fr="Situation 00 AF. Récupération automatique." data-ar="وضعية 00 AF. استرداد تلقائي.">Situation 00 AF. Récupération automatique.</p></div></div>
+        <div class="module-item"><div class="module-num">12</div><div><h4 data-fr="Avance Appro" data-ar="سلفة التموين">Avance Appro</h4><p data-fr="Situation 00 Appro. Récupération automatique." data-ar="وضعية 00 تموين. استرداد تلقائي.">Situation 00 Appro. Récupération automatique.</p></div></div>
+    </div>
+</section>
+
+<!-- INSTALLATION -->
+<section class="section" id="installation">
+    <div class="section-label" data-fr="Installation" data-ar="التثبيت">Installation</div>
+    <h2 class="section-title" data-fr="Démarrez en quelques minutes" data-ar="ابدأ في دقائق">Démarrez en quelques minutes</h2>
+    <p class="section-sub" data-fr="Installation simple et rapide sur Windows 10/11." data-ar="تثبيت بسيط وسريع على Windows 10/11.">Installation simple et rapide sur Windows 10/11.</p>
+    <div class="steps">
+        <div class="step"><div class="step-num">1</div><h4 data-fr="Télécharger" data-ar="تحميل">Télécharger</h4><p data-fr="Contactez le développeur pour recevoir le fichier GestionProjetBTP_Setup.exe." data-ar="تواصل مع المطور للحصول على ملف GestionProjetBTP_Setup.exe.">Contactez le développeur pour recevoir le fichier GestionProjetBTP_Setup.exe.</p></div>
+        <div class="step"><div class="step-num">2</div><h4 data-fr="Installer" data-ar="تثبيت">Installer</h4><p data-fr="Lancez l'installateur et suivez les étapes." data-ar="شغّل المثبت واتبع الخطوات.">Lancez l'installateur et suivez les étapes.</p></div>
+        <div class="step"><div class="step-num">3</div><h4 data-fr="Démarrer" data-ar="انطلاق">Démarrer</h4><p data-fr="Lancez l'application. Elle démarre en mode évaluation (30 jours)." data-ar="شغّل التطبيق. يبدأ في وضع التقييم (30 يوماً).">Lancez l'application. Elle démarre en mode évaluation (30 jours).</p></div>
+        <div class="step"><div class="step-num">4</div><h4 data-fr="Activer" data-ar="تفعيل">Activer</h4><p data-fr="Contactez le développeur avec votre N° Série pour activer votre licence." data-ar="تواصل مع المطور برقم التسلسل للتفعيل.">Contactez le développeur avec votre N° Série pour activer votre licence.</p></div>
+    </div>
+    <br><br>
+    <div style="background:#F1F8F1;border-radius:12px;padding:2rem;border-left:4px solid var(--vert);">
+        <strong data-fr="⚙️ Configuration requise :" data-ar="⚙️ المتطلبات:">⚙️ Configuration requise :</strong><br><br>
+        <span style="color:var(--gris)" data-fr="• Windows 10 / 11 (64 bits)<br>• .NET 10 Runtime (inclus)<br>• 200 Mo d'espace disque<br>• 4 Go de RAM recommandé" data-ar="• Windows 10 / 11 (64 بت)<br>• .NET 10 Runtime (مضمّن)<br>• 200 ميغابايت مساحة<br>• 4 غيغابايت RAM موصى به">• Windows 10 / 11 (64 bits)<br>• .NET 10 Runtime (inclus)<br>• 200 Mo d'espace disque<br>• 4 Go de RAM recommandé</span>
+    </div>
+</section>
+
+<!-- LICENCE -->
+<section class="section" id="licence" style="background:#F1F8F1;">
+    <div class="section-label" data-fr="Licence" data-ar="الترخيص">Licence</div>
+    <h2 class="section-title" data-fr="Choisissez votre mode d'activation" data-ar="اختر طريقة التفعيل">Choisissez votre mode d'activation</h2>
+    <p class="section-sub" data-fr="Deux modes de licence adaptés à vos besoins." data-ar="طريقتان للترخيص تناسبان احتياجاتك.">Deux modes de licence adaptés à vos besoins.</p>
+    <div class="licence-cards">
+        <div class="licence-card usb">
+            <div class="licence-badge">🔑</div>
+            <h3 data-fr="Clé USB" data-ar="مفتاح USB">Clé USB</h3>
+            <p class="subtitle" data-fr="Multi-PC — Recommandé" data-ar="متعدد الأجهزة — موصى به">Multi-PC — Recommandé</p>
+            <ul>
+                <li data-fr="Utilisez l'application sur plusieurs PC" data-ar="استخدم التطبيق على عدة أجهزة">Utilisez l'application sur plusieurs PC</li>
+                <li data-fr="La clé USB suffit comme autorisation" data-ar="مفتاح USB كافٍ كترخيص">La clé USB suffit comme autorisation</li>
+                <li data-fr="Branchez et démarrez immédiatement" data-ar="وصّل وابدأ فوراً">Branchez et démarrez immédiatement</li>
+                <li data-fr="Données stockées sur le PC" data-ar="البيانات مخزنة على الجهاز">Données stockées sur le PC</li>
+            </ul>
+        </div>
+        <div class="licence-card pc">
+            <div class="licence-badge">💻</div>
+            <h3 data-fr="Licence PC" data-ar="ترخيص جهاز">Licence PC</h3>
+            <p class="subtitle" data-fr="Mono-PC — Pour les distants" data-ar="جهاز واحد — للمناطق البعيدة">Mono-PC — Pour les distants</p>
+            <ul>
+                <li data-fr="Pas besoin de clé USB" data-ar="لا حاجة لمفتاح USB">Pas besoin de clé USB</li>
+                <li data-fr="Liée à un seul ordinateur" data-ar="مرتبط بجهاز واحد فقط">Liée à un seul ordinateur</li>
+                <li data-fr="Envoyez votre N° Série" data-ar="أرسل رقم التسلسل">Envoyez votre N° Série</li>
+                <li data-fr="Recevez votre licence par email" data-ar="استلم ترخيصك عبر البريد الإلكتروني">Recevez votre licence par email</li>
+            </ul>
+        </div>
+    </div>
+    <br><br>
+    <div style="text-align:center;background:white;border-radius:12px;padding:2rem;border:1px solid #E0EEE1;">
+        <p style="color:var(--gris);margin-bottom:1rem;" data-fr="Période d'évaluation : <strong>30 jours gratuits</strong>" data-ar="فترة التقييم: <strong>30 يوماً مجانياً</strong>">Période d'évaluation : <strong>30 jours gratuits</strong></p>
+        <a href="#contact" class="btn-primary" data-fr="Contacter pour activer →" data-ar="تواصل للتفعيل →">Contacter pour activer →</a>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+    <div class="section-label" data-fr="FAQ" data-ar="الأسئلة الشائعة">FAQ</div>
+    <h2 class="section-title" data-fr="Questions fréquentes" data-ar="الأسئلة الشائعة">Questions fréquentes</h2>
+    <p class="section-sub" data-fr="Trouvez rapidement les réponses à vos questions." data-ar="اعثر بسرعة على إجابات أسئلتك.">Trouvez rapidement les réponses à vos questions.</p>
+    <div class="faq-list">
+        <div class="faq-item">
+            <div class="faq-q" data-fr="J'ai perdu ma clé USB, que faire ?" data-ar="فقدت مفتاح USB، ماذا أفعل؟">J'ai perdu ma clé USB, que faire ? <span>+</span></div>
+            <div class="faq-a" data-fr="Contactez le développeur. Une nouvelle clé USB sera préparée pour vous. Vos données sont conservées sur votre PC." data-ar="تواصل مع المطور. سيتم تحضير مفتاح USB جديد لك. بياناتك محفوظة على جهازك.">Contactez le développeur. Une nouvelle clé USB sera préparée pour vous. Vos données sont conservées sur votre PC.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" data-fr="Puis-je utiliser l'application sur deux PC simultanément ?" data-ar="هل يمكنني استخدام التطبيق على جهازين في نفس الوقت؟">Puis-je utiliser l'application sur deux PC simultanément ? <span>+</span></div>
+            <div class="faq-a" data-fr="Non. Une seule clé USB = un seul PC à la fois." data-ar="لا. مفتاح USB واحد = جهاز واحد في كل مرة.">Non. Une seule clé USB = un seul PC à la fois.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" data-fr="Mes données sont-elles perdues si je désinstalle ?" data-ar="هل تضيع بياناتي إذا قمت بإلغاء التثبيت؟">Mes données sont-elles perdues si je désinstalle ? <span>+</span></div>
+            <div class="faq-a" data-fr="Non. Les données sont stockées dans AppData et ne sont pas supprimées lors de la désinstallation." data-ar="لا. البيانات مخزنة في AppData ولا تُحذف عند إلغاء التثبيت.">Non. Les données sont stockées dans AppData et ne sont pas supprimées lors de la désinstallation.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" data-fr="Quelle est la différence entre Révision et Actualisation ?" data-ar="ما الفرق بين المراجعة والتحديث؟">Quelle est la différence entre Révision et Actualisation ? <span>+</span></div>
+            <div class="faq-a" data-fr="La révision est calculée mois par mois. L'actualisation est déclenchée quand le délai entre fin validité des offres et ODS démarrage dépasse le délai de carence." data-ar="المراجعة تُحسب شهراً بشهر. التحديث يُفعَّل عندما تتجاوز المدة بين نهاية صلاحية العروض وأمر البدء فترة الانتظار.">La révision est calculée mois par mois. L'actualisation est déclenchée quand le délai entre fin validité des offres et ODS démarrage dépasse le délai de carence.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" data-fr="L'application fonctionne-t-elle sans internet ?" data-ar="هل يعمل التطبيق بدون إنترنت؟">L'application fonctionne-t-elle sans internet ? <span>+</span></div>
+            <div class="faq-a" data-fr="Oui, GestionProjetBTP fonctionne entièrement hors ligne." data-ar="نعم، يعمل التطبيق بشكل كامل بدون اتصال بالإنترنت.">Oui, GestionProjetBTP fonctionne entièrement hors ligne.</div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact" id="contact">
+    <div class="section-label" style="color:var(--vert-clair)" data-fr="Contact" data-ar="التواصل">Contact</div>
+    <h2 class="section-title" data-fr="Contactez le développeur" data-ar="تواصل مع المطور">Contactez le développeur</h2>
+    <p class="section-sub" data-fr="Pour l'activation, le support ou toute question sur GestionProjetBTP." data-ar="للتفعيل، الدعم أو أي سؤال حول البرنامج.">Pour l'activation, le support ou toute question sur GestionProjetBTP.</p>
+    <div class="contact-grid">
+        <div class="contact-info">
+            <div class="contact-item"><div class="contact-icon">👨‍💻</div><div><h4 data-fr="Développeur" data-ar="المطور">Développeur</h4><p>LEMAVGRIS — Gouneiber Mohamed</p></div></div>
+            <div class="contact-item"><div class="contact-icon">📧</div><div><h4>Email</h4><p>Lemavgris2017@gmail.com</p></div></div>
+            <div class="contact-item"><div class="contact-icon">📞</div><div><h4 data-fr="Téléphone" data-ar="الهاتف">Téléphone</h4><p>06.76.12.24.40</p></div></div>
+            <div class="contact-item"><div class="contact-icon">📍</div><div><h4 data-fr="Localisation" data-ar="الموقع">Localisation</h4><p data-fr="Ain-Sefra 45200, Naama, Algérie" data-ar="عين الصفراء 45200، النعامة، الجزائر">Ain-Sefra 45200, Naama, Algérie</p></div></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border-radius:16px;padding:2.5rem;border:1px solid rgba(255,255,255,0.1);">
+            <h3 style="color:white;font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:1.5rem;" data-fr="Pour l'activation" data-ar="للتفعيل">Pour l'activation</h3>
+            <ol style="color:rgba(255,255,255,0.7);font-size:0.9rem;line-height:2;padding-left:1.5rem;" data-fr="<li>Installez l'application</li><li>Allez dans <strong style='color:white'>Paramètres → Activation</strong></li><li>Notez votre <strong style='color:var(--or)'>N° Série</strong></li><li>Envoyez-le par email ou téléphone</li><li>Recevez votre licence sous 24h</li>" data-ar="<li>ثبّت التطبيق</li><li>اذهب إلى <strong style='color:white'>الإعدادات ← التفعيل</strong></li><li>سجّل <strong style='color:var(--or)'>رقم التسلسل</strong></li><li>أرسله عبر البريد أو الهاتف</li><li>استلم ترخيصك خلال 24 ساعة</li>"><li>Installez l'application</li><li>Allez dans <strong style="color:white">Paramètres → Activation</strong></li><li>Notez votre <strong style="color:var(--or)">N° Série</strong></li><li>Envoyez-le par email ou téléphone</li><li>Recevez votre licence sous 24h</li></ol>
+            <br>
+            <a href="mailto:Lemavgris2017@gmail.com" class="btn-primary" style="width:100%;text-align:center;display:block;" data-fr="📧 Envoyer un email" data-ar="📧 إرسال بريد إلكتروني">📧 Envoyer un email</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-logo">Gestion<span>ProjetBTP</span></div>
+    <p data-fr="© 2025 LEMAVGRIS — Tous droits réservés" data-ar="© 2025 LEMAVGRIS — جميع الحقوق محفوظة">© 2025 LEMAVGRIS — Tous droits réservés</p>
+    <p data-fr="Logiciel propriétaire — Ain-Sefra, Algérie" data-ar="برنامج احترافي — عين الصفراء، الجزائر">Logiciel propriétaire — Ain-Sefra, Algérie</p>
+</footer>
+
+<script>
+    let currentLang = 'fr';
+
+    function toggleLang() {
+        currentLang = currentLang === 'fr' ? 'ar' : 'fr';
+        const html = document.documentElement;
+        const body = document.body;
+        const btn = document.querySelector('.btn-lang');
+
+        if (currentLang === 'ar') {
+            html.lang = 'ar';
+            html.dir = 'rtl';
+            body.classList.add('ar');
+            btn.textContent = '🌐 Français';
+        } else {
+            html.lang = 'fr';
+            html.dir = 'ltr';
+            body.classList.remove('ar');
+            btn.textContent = '🌐 العربية';
+        }
+
+        // Translate all elements with data-fr/data-ar
+        document.querySelectorAll('[data-fr]').forEach(el => {
+            const text = currentLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-fr');
+            if (text) el.innerHTML = text;
+        });
+    }
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        });
+    });
+</script>
+</body>
+</html>
